@@ -1,0 +1,169 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data;
+using System.Web;
+using org.in2bits.MyXls;
+
+namespace DTcms.Common
+{
+    public class DataToExcel
+    {
+        /// <summary>
+        /// 站点虚拟目录物理路径
+        /// </summary>
+        public static string SERVER_PATH
+        {
+            get
+            {
+                try
+                {
+                    return HttpContext.Current.Server.HtmlEncode(HttpContext.Current.Request.PhysicalApplicationPath);
+                }
+                catch (Exception)
+                {
+                    throw (new Exception("获取站点虚拟目录物理路径失败"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// datatable 导出excel
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="list">需要导出的列集合</param>
+        /// <param name="FileFullName"></param>
+        /// <param name="Title"></param>
+        /// <returns></returns>
+        public static void DataTableToExcel(DataTable dt, List<ExportEntity> list, string FileFullName, string Title)
+        {
+            XlsDocument xls = new XlsDocument();
+            xls.FileName = FileFullName;
+
+            Worksheet sheet = xls.Workbook.Worksheets.AddNamed("Sheet1");
+
+            int k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+                string datatype = entity.Format;
+                //if (datatype == "N") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_1; }
+                //else if (datatype == "N2") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_2; }
+                k++;
+            }
+
+            Cells cells = sheet.Cells;
+
+            cells.Add(1, 1, Title).Font.Bold = true;
+
+            long totalCount = dt.Rows.Count;
+            //写入字段 
+
+            k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                cells.Add(2, k+1, entity.Name).Font.Bold = true;
+
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+
+                k++;
+            }
+            //写入数值
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                int c = 0;
+                foreach (ExportEntity entity in list)
+                {
+                    string[] cols = (entity.Expression).Split('/');
+                    string CellValue = "";
+                    string datatype = entity.Format;
+
+                    for (int j = 0; j < cols.Length; j++)
+                    {
+                        if (datatype == "yyyy-MM-dd")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "" : DateTime.Parse(dt.Rows[i][cols[j]].ToString()).ToString("yyyy-MM-dd").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "P2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("P2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "F2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("F2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString().Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                    }
+
+                    Cell cell = cells.Add(i + 3, c + 1, CellValue);
+                    if (datatype == "N") { cell.Format = StandardFormats.Decimal_1; }
+                    else if (datatype == "N2") { cell.Format = StandardFormats.Decimal_2; }
+                    else { cell.Format = StandardFormats.Accounting_1; }
+                    c++;
+                }
+            }
+            xls.Save(SERVER_PATH+"/TEMP",true);
+        }
+    }
+}

@@ -1,0 +1,170 @@
+﻿using System;
+using System.Collections.Generic;
+namespace DTcms.Model
+{
+    /// <summary>
+    /// 车型信息
+    /// </summary>
+    [Serializable]
+    public partial class car_repair_recordinfo
+    {
+        public car_repair_recordinfo()
+        { }
+        #region Model
+        private int _ID;
+        private string _Code;
+        private string _Repare_Time;
+        private carinfo _Car = new carinfo();
+        private int _Mileage = 0;
+        private int _Next_Mileage = 0;
+        private car_maintenance_iteminfo _Maintenance_Item = new car_maintenance_iteminfo();
+        private string _Reason;
+        private string _Repair_Plant_Code;
+        private string _Repare_Time_Finish;
+        private string _Report;
+        private decimal _Cost = 0;
+        private int _Status = 0;
+        private List<car_repair_iteminfo> _Car_Repair_Items = new List<car_repair_iteminfo>();
+        //保养项
+        private List<car_maintenance_iteminfo> _Car_Maintenance_Items = new List<car_maintenance_iteminfo>();
+        private car_driverinfo _Driver = new car_driverinfo();
+        //
+        private string _Choice;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Choice
+        {
+            set { _Choice = value; }
+            get { return _Choice; }
+        }
+        /// <summary>
+        /// 自增ID
+        /// </summary>
+        public int ID
+        {
+            set { _ID = value; }
+            get { return _ID; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Code
+        {
+            set { _Code = value; }
+            get { return _Code; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public string Repare_Time
+        {
+            set { _Repare_Time = value; }
+            get { return _Repare_Time; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public carinfo Car
+        {
+            set { _Car = value; }
+            get { return _Car; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public int Mileage
+        {
+            set { _Mileage = value; }
+            get { return _Mileage; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public int Next_Mileage
+        {
+            set { _Next_Mileage = value; }
+            get { return _Next_Mileage; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public car_maintenance_iteminfo Maintenance_Item
+        {
+            set { _Maintenance_Item = value; }
+            get { return _Maintenance_Item; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public string Reason
+        {
+            set { _Reason = value; }
+            get { return _Reason; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public string Repair_Plant_Code
+        {
+            set { _Repair_Plant_Code = value; }
+            get { return _Repair_Plant_Code; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public string Repare_Time_Finish
+        {
+            set { _Repare_Time_Finish = value; }
+            get { return _Repare_Time_Finish; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public string Report
+        {
+            set { _Report = value; }
+            get { return _Report; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public decimal Cost
+        {
+            set { _Cost = value; }
+            get { return _Cost; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public int Status
+        {
+            set { _Status = value; }
+            get { return _Status; }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        public List<car_repair_iteminfo> Car_Repair_Items
+        {
+            set { _Car_Repair_Items = value; }
+            get { return _Car_Repair_Items; }
+        }
+
+        /// <summary>
+        /// 保养项集合
+        /// </summary>
+        public List<car_maintenance_iteminfo> Car_Maintenance_Items
+        {
+            set { _Car_Maintenance_Items = value; }
+            get { return _Car_Maintenance_Items; }
+        }
+
+        public car_driverinfo Driver {
+            set { _Driver = value; }
+            get { return _Driver; }
+        }
+        #endregion Model
+    }
+}

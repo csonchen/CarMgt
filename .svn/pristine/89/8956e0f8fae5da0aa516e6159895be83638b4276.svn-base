@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<siteconfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <webname>车辆管理系统</webname>
+  <webcompany>太阳神</webcompany>
+  <weburl>http://cl.apollo.com.cn</weburl>
+  <webtel>13800138000</webtel>
+  <webfax>-</webfax>
+  <webmail>it@apollo.com.cn</webmail>
+  <webcrod>粤ICP备号</webcrod>
+  <webtitle>车辆管理系统</webtitle>
+  <webkeyword>车辆管理系统</webkeyword>
+  <webdescription>车辆管理系统</webdescription>
+  <webcopyright>版权所有 太阳神 © Copyright 2014. Apollo. All Rights Reserved.</webcopyright>
+  <webpath>/</webpath>
+  <webmanagepath>admin</webmanagepath>
+  <webstatus>1</webstatus>
+  <webclosereason>网站正在维护中，请稍候访问……</webclosereason>
+  <webcountcode />
+  <staticstatus>1</staticstatus>
+  <staticextension>html</staticextension>
+  <memberstatus>1</memberstatus>
+  <commentstatus>0</commentstatus>
+  <logstatus>1</logstatus>
+  <emailstmp>smtp.qq.com</emailstmp>
+  <emailport>25</emailport>
+  <emailfrom>init@apollo.com.cn</emailfrom>
+  <emailusername>it@apollo.com.cn</emailusername>
+  <emailpassword>EA4C94A47ED87546</emailpassword>
+  <emailnickname>it</emailnickname>
+  <attachpath>upload</attachpath>
+  <attachextension>gif,jpg,png,bmp,rar,zip,doc,xls,txt</attachextension>
+  <attachsave>2</attachsave>
+  <attachfilesize>51200</attachfilesize>
+  <attachimgsize>10240</attachimgsize>
+  <attachimgmaxheight>800</attachimgmaxheight>
+  <attachimgmaxwidth>800</attachimgmaxwidth>
+  <thumbnailheight>300</thumbnailheight>
+  <thumbnailwidth>300</thumbnailwidth>
+  <watermarktype>2</watermarktype>
+  <watermarkposition>9</watermarkposition>
+  <watermarkimgquality>80</watermarkimgquality>
+  <watermarkpic>watermark.png</watermarkpic>
+  <watermarktransparency>5</watermarktransparency>
+  <watermarktext>动力启航</watermarktext>
+  <watermarkfont>Tahoma</watermarkfont>
+  <watermarkfontsize>12</watermarkfontsize>
+  <templateskin>green</templateskin>
+  <sysdatabaseprefix>dt_</sysdatabaseprefix>
+  <sysencryptstring>DTcms</sysencryptstring>
+</siteconfig>

@@ -1,0 +1,575 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data;
+using System.Web;
+using org.in2bits.MyXls;
+
+namespace DTcms.Common
+{
+    public class DataToExcel
+    {
+        /// <summary>
+        /// 站点虚拟目录物理路径
+        /// </summary>
+        public static string SERVER_PATH
+        {
+            get
+            {
+                try
+                {
+                    return HttpContext.Current.Server.HtmlEncode(HttpContext.Current.Request.PhysicalApplicationPath);
+                }
+                catch (Exception)
+                {
+                    throw (new Exception("获取站点虚拟目录物理路径失败"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// datatable 导出excel
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="list">需要导出的列集合</param>
+        /// <param name="FileFullName"></param>
+        /// <param name="Title"></param>
+        /// <returns></returns>
+        public static void DataTableToExcel(DataTable dt, List<ExportEntity> list, string FileFullName, string Title)
+        {
+            XlsDocument xls = new XlsDocument();
+            xls.FileName = FileFullName;
+
+            Worksheet sheet = xls.Workbook.Worksheets.AddNamed("Sheet1");
+
+            int k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+                string datatype = entity.Format;
+                //if (datatype == "N") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_1; }
+                //else if (datatype == "N2") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_2; }
+                k++;
+            }
+
+            Cells cells = sheet.Cells;
+
+            cells.Add(1, 1, Title).Font.Bold = true;
+            //合并单元格
+            //cells.Merge(1, 1, 1, 4);
+
+            long totalCount = dt.Rows.Count;
+            //写入字段 
+
+            k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                cells.Add(2, k+1, entity.Name).Font.Bold = true;
+
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+
+                k++;
+            }
+            //写入数值
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                int c = 0;
+                foreach (ExportEntity entity in list)
+                {
+                    string[] cols = (entity.Expression).Split('/');
+                    string CellValue = "";
+                    string datatype = entity.Format;
+
+                    for (int j = 0; j < cols.Length; j++)
+                    {
+                        if (datatype == "yyyy-MM-dd")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "" : DateTime.Parse(dt.Rows[i][cols[j]].ToString()).ToString("yyyy-MM-dd").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "P2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("P2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "F2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("F2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString().Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                    }
+
+                    Cell cell = cells.Add(i + 3, c + 1, CellValue);
+                    if (datatype == "N") { cell.Format = StandardFormats.Decimal_1; }
+                    else if (datatype == "N2") { cell.Format = StandardFormats.Decimal_2; }
+                    else { cell.Format = StandardFormats.Accounting_1; }
+                    c++;
+                }
+            }
+            xls.Save(SERVER_PATH+"/TEMP",true);
+        }
+
+        /// <summary>
+        /// 转换加上样式处理
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="list"></param>
+        /// <param name="FileFullName"></param>
+        /// <param name="Title"></param>
+        public static void DataTableToExcelForStyle(DataTable dt, List<ExportEntity> list, 
+                string FileFullName, string Title,bool merge,bool multimerge,bool mergeRegion,bool isfunMerge,
+                int rowMin,int rowMax,int colMin,int colMax)
+        {
+            XlsDocument xls = new XlsDocument();
+            xls.FileName = FileFullName;
+
+            Worksheet sheet = xls.Workbook.Worksheets.AddNamed("Sheet1");
+
+            int k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+                string datatype = entity.Format;
+                //if (datatype == "N") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_1; }
+                //else if (datatype == "N2") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_2; }
+                k++;
+            }
+
+            //指定单元格格式
+            XF xf = xls.NewXF();
+            xf.HorizontalAlignment = HorizontalAlignments.Centered;
+            xf.VerticalAlignment = VerticalAlignments.Centered;
+            xf.UseBorder = true;
+            xf.TopLineStyle = 1;
+            xf.TopLineColor = Colors.Black;
+            xf.BottomLineStyle = 1;
+            xf.BottomLineColor = Colors.Black;
+            xf.LeftLineStyle = 1;
+            xf.LeftLineColor = Colors.Black;
+            xf.RightLineStyle = 1;
+            xf.RightLineColor = Colors.Black;
+            xf.Font.Height = 11 * 20;
+            
+            Cells cells = sheet.Cells;
+            
+            //合并单元格
+            //cells.Merge(1, 1, 1, 4);
+            if (mergeRegion)
+            {
+                MergeRegion(ref sheet, xf, Title, rowMin, colMin, rowMax, colMax);
+            }
+            else
+            {
+               cells.Merge(rowMin, rowMax, colMin, colMax);
+               cells.Add(1, 1, Title).Font.Bold = true;
+               cells.Add(1, 1, Title).HorizontalAlignment = HorizontalAlignments.Centered;
+               cells.Add(1, 1, Title).VerticalAlignment = VerticalAlignments.Centered;
+               cells.Add(1, 1, Title).Font.Height = 11 * 20;
+            }
+            
+            cells.Add(1, 1, Title).Font.Bold = true;
+            long totalCount = dt.Rows.Count;
+            //写入字段 
+
+            if (isfunMerge)
+            {
+                cells.Merge(2, 3, 1, 1);
+                cells.Merge(2, 3, 2, 2);
+                cells.Merge(2, 3, 3, 5); 
+            }
+
+            k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                cells.Add(2, k + 1, entity.Name,xf).Font.Bold = true;
+
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+
+                k++;
+            }
+            //写入数值
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                int c = 0;
+                foreach (ExportEntity entity in list)
+                {
+                    string[] cols = (entity.Expression).Split('/');
+                    string CellValue = "";
+                    string datatype = entity.Format;
+
+                    for (int j = 0; j < cols.Length; j++)
+                    {
+                        if (datatype == "yyyy-MM-dd")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "" : DateTime.Parse(dt.Rows[i][cols[j]].ToString()).ToString("yyyy-MM-dd").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "P2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("P2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "F2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("F2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString().Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                    }
+
+                    Cell cell = cells.Add(i + 3, c + 1, CellValue,xf);
+
+                    if (datatype == "N") { cell.Format = StandardFormats.Decimal_1; }
+                    else if (datatype == "N2") { cell.Format = StandardFormats.Decimal_2; }
+                    else { cell.Format = StandardFormats.Accounting_1; }
+                    c++;
+                }
+            }
+
+            
+            //是否需要合并
+            if (merge)
+            {
+                //行合并（i：行；j：列）
+                for (int i = 3; i < sheet.Rows.Count; i = i + 2)
+                {
+                    //rowmin:开始行；rowmax：结束行；colMin:开始列；colMax：结束列
+                    //cells.Merge(rowmin.rowmax, colMin, colMax);
+                    for (int j = 1; j < 5; j++)
+                    {
+                        cells.Merge(i, i + 1, j, j);
+                    }
+                } 
+            }
+            
+            if (multimerge)
+            {
+                for (int i = 4; i <= sheet.Rows.Count; i = i + 4)
+                {
+                    cells.Merge(i, i + 3, 1, 1);
+                    cells.Merge(i, i + 3, 2, 2);
+                    //rowmin:开始行；rowmax：结束行；colMin:开始列；colMax：结束列
+                    //cells.Merge(rowmin.rowmax, colMin, colMax);
+                    for (int j = 3; j < 6; j++)
+                    {
+                        cells.Merge(i, i + 1, j, j);
+                        cells.Merge(i + 2, i + 3, j, j);
+                    }
+                }   
+            }
+            
+            xls.Save(SERVER_PATH + "/TEMP", true);
+        }
+
+        //修改合并单元格后样式只是出现在第一个的bug
+        public static void MergeRegion(ref Worksheet ws, XF xf, string title, int startRow, int startCol, int endRow, int endCol)
+        {
+            for (int i = startCol; i <= endCol; i++)
+            {
+                for (int j = startRow; j <= endRow; j++)
+                {   
+                    ws.Cells.Add(j, i, title, xf); 
+                }
+            }
+            ws.Cells.Merge(startRow, endRow, startCol, endCol);
+        }
+
+        #region     
+        public static void DataTableToExcelForStyle3(DataTable dt, List<ExportEntity> list, string FileFullName, string Title)
+        {
+            XlsDocument xls = new XlsDocument();
+            xls.FileName = FileFullName;
+
+            Worksheet sheet = xls.Workbook.Worksheets.AddNamed("Sheet1");
+
+            int k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+                string datatype = entity.Format;
+                //if (datatype == "N") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_1; }
+                //else if (datatype == "N2") { colInfo.ExtendedFormat.Format = StandardFormats.Decimal_2; }
+                k++;
+            }
+
+            //指定单元格格式
+            XF xf = xls.NewXF();
+            xf.HorizontalAlignment = HorizontalAlignments.Centered;
+            xf.VerticalAlignment = VerticalAlignments.Centered;
+            xf.UseBorder = false;
+            xf.TopLineStyle = 1;
+            xf.TopLineColor = Colors.Black;
+            xf.BottomLineStyle = 1;
+            xf.BottomLineColor = Colors.Black;
+            xf.LeftLineStyle = 1;
+            xf.LeftLineColor = Colors.Black;
+            xf.RightLineStyle = 1;
+            xf.RightLineColor = Colors.Black;
+            xf.Font.Height = 11 * 20;
+            xf.UseBackground = false;
+
+            XF xf2 = xls.NewXF();
+            xf.HorizontalAlignment = HorizontalAlignments.Centered;
+            xf.VerticalAlignment = VerticalAlignments.Centered;
+            xf.UseBorder = false;
+            xf.TopLineStyle = 1;
+            xf.TopLineColor = Colors.Black;
+            xf.BottomLineStyle = 1;
+            xf.BottomLineColor = Colors.Black;
+            xf.LeftLineStyle = 1;
+            xf.LeftLineColor = Colors.Black;
+            xf.RightLineStyle = 1;
+            xf.RightLineColor = Colors.Black;
+            xf.Font.Height = 11 * 20;
+            xf.UseBackground = false;
+
+            Cells cells = sheet.Cells;
+
+            //合并单元格
+            cells.Merge(1, 1, 1, 4);
+            //MergeRegion(ref sheet, xf, Title, 1, 1, 1, 4);
+            cells.Add(1, 1, Title).Font.Bold = true;
+            cells.Add(1, 1, Title).HorizontalAlignment = HorizontalAlignments.Centered;
+            cells.Add(1, 1, Title).VerticalAlignment = VerticalAlignments.Centered;
+            cells.Add(1, 1, Title).Font.Height = 11 * 20;
+            long totalCount = dt.Rows.Count;
+            //写入字段 
+
+            k = 0;
+            foreach (ExportEntity entity in list)
+            {
+                cells.Add(2, k + 1, entity.Name, xf).Font.Bold = true;
+                ColumnInfo colInfo = new ColumnInfo(xls, sheet);
+                colInfo.ColumnIndexStart = ushort.Parse(k.ToString());
+                colInfo.ColumnIndexEnd = ushort.Parse(k.ToString());
+                colInfo.Width = entity.Width;
+                sheet.AddColumnInfo(colInfo);
+
+                k++;
+            }
+            //写入数值
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                int c = 0;
+                foreach (ExportEntity entity in list)
+                {
+                    string[] cols = (entity.Expression).Split('/');
+                    string CellValue = "";
+                    string datatype = entity.Format;
+
+                    for (int j = 0; j < cols.Length; j++)
+                    {
+                        if (datatype == "yyyy-MM-dd")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "" : DateTime.Parse(dt.Rows[i][cols[j]].ToString()).ToString("yyyy-MM-dd").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "P2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("P2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "N2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("N2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else if (datatype == "F2")
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString() == "" ? "0" : Decimal.Parse(dt.Rows[i][cols[j]].ToString()).ToString("F2").Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                        else
+                        {
+                            string tempStr = dt.Rows[i][cols[j]].ToString().Trim();
+                            if (tempStr != "")
+                            {
+                                if (CellValue == "")
+                                    CellValue = tempStr;
+                                else
+                                    CellValue = CellValue + "/" + tempStr;
+                            }
+                        }
+                    }
+
+                    Cell cell;
+                    //后3行不对单元格做样式处理
+                    if (i == dt.Rows.Count - 3 || i == dt.Rows.Count - 2 || i == dt.Rows.Count - 1)
+                    {
+                        cell = cells.Add(i + 3, c + 1, CellValue);
+                    }
+                    else 
+                    {
+                        cell = cells.Add(i + 3, c + 1, CellValue, xf);
+                    }
+                    
+
+                    if (datatype == "N") { cell.Format = StandardFormats.Decimal_1; }
+                    else if (datatype == "N2") { cell.Format = StandardFormats.Decimal_2; }
+                    else { cell.Format = StandardFormats.Accounting_1; }
+                    c++;
+                }
+            }
+            xls.Save(SERVER_PATH + "/TEMP", true);
+        }
+        #endregion
+
+
+    }
+}

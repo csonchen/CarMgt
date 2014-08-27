@@ -1,0 +1,364 @@
+using System;
+using System.Data;
+using System.Text;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using DTcms.DBUtility;
+using DTcms.Common;
+
+namespace DTcms.DAL
+{
+    /// <summary>
+    /// 车辆信息
+    /// </summary>
+    public partial class cardal
+    {
+        public cardal()
+        { }
+        #region  Method
+        /// <summary>
+        /// 是否存在该记录
+        /// </summary>
+        public bool Exists(int id)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select count(1) from car_info");
+            strSql.Append(" where id=@id");
+            SqlParameter[] parameters = {
+					new SqlParameter("@id", SqlDbType.Int,4)};
+            parameters[0].Value = id;
+
+            return DbHelperSQL.Exists(strSql.ToString(), parameters);
+        }
+
+        /// <summary>
+        /// 检查用户名是否存在
+        /// </summary>
+        public bool Exists(string carnumber)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select count(1) from car_info");
+            strSql.Append(" where Car_Number=@carnumber ");
+            SqlParameter[] parameters = {
+					new SqlParameter("@carnumber", SqlDbType.NVarChar,100)};
+            parameters[0].Value = carnumber;
+            return DbHelperSQL.Exists(strSql.ToString(), parameters);
+        }
+
+        /// <summary>
+        /// 增加一条数据
+        /// </summary>
+        public int Add(Model.carinfo model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("insert into car_info(");
+            strSql.Append("Car_Number,Car_Name,Car_Type_Code,Car_Type_Name,Driver_Code,Buy_Date,Price,Mileage_First,Status,Oil_Consumption,Engine_Number,Frame_Number,Weight,Seat,cContent,Image1,Image2,Dept_Pros)");
+            strSql.Append(" values (");
+            strSql.Append("@carnumber,@carname,@cartypecode,@cartypename,@drivercode,@buydate,@price,@mileagefirst,@status,@oilconsumption,@enginenumber,@framenumber,@weight,@seat,@ccontent,@image1,@image2,@deptpros)");
+            strSql.Append(";select @@IDENTITY");
+            SqlParameter[] parameters = {
+					new SqlParameter("@carnumber", SqlDbType.NVarChar,100),
+					new SqlParameter("@carname", SqlDbType.NVarChar,100),
+					new SqlParameter("@cartypecode", SqlDbType.NVarChar,100),
+					new SqlParameter("@cartypename", SqlDbType.NVarChar,100),
+					new SqlParameter("@drivercode", SqlDbType.NVarChar,100),
+					new SqlParameter("@buydate", SqlDbType.NVarChar,100),
+					new SqlParameter("@price", SqlDbType.Float,10),
+					new SqlParameter("@mileagefirst", SqlDbType.Int,10),
+					new SqlParameter("@status", SqlDbType.Int,10),
+					new SqlParameter("@oilconsumption", SqlDbType.Float,10),
+					new SqlParameter("@enginenumber", SqlDbType.NVarChar,100),
+					new SqlParameter("@framenumber", SqlDbType.NVarChar,100),
+					new SqlParameter("@weight", SqlDbType.Float,10),
+					new SqlParameter("@seat", SqlDbType.Int,10),
+					new SqlParameter("@ccontent", SqlDbType.NVarChar,100),
+					new SqlParameter("@image1", SqlDbType.NVarChar,100),
+					new SqlParameter("@image2", SqlDbType.NVarChar,100),
+					new SqlParameter("@deptpros", SqlDbType.NVarChar,26)};
+            parameters[0].Value = model.Car_Number;
+            parameters[1].Value = model.Car_Name;
+            parameters[2].Value = model.Car_Type.Type_Code;
+            parameters[3].Value = model.Car_Type.Type_Name;
+            parameters[4].Value = model.Driver.Driver_Code;
+            parameters[5].Value = model.Buy_Date;
+            parameters[6].Value = model.Price;
+            parameters[7].Value = model.Mileage_First;
+            parameters[8].Value = model.Status;
+            parameters[9].Value = model.Oil_Consumption;
+            parameters[10].Value = model.Engine_Number;
+            parameters[11].Value = model.Frame_Number;
+            parameters[12].Value = model.Weight;
+            parameters[13].Value = model.Seat;
+            parameters[14].Value = model.cContent;
+            parameters[15].Value = model.Image1;
+            parameters[16].Value = model.Image2;
+            parameters[17].Value = model.Dept_Pros;
+
+            object obj = DbHelperSQL.GetSingle(strSql.ToString(), parameters);
+            if (obj == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return Convert.ToInt32(obj);
+            }
+        }
+
+        /// <summary>
+        /// 修改一列数据
+        /// </summary>
+        public int UpdateField(int id, string strValue)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("update car_info set " + strValue);
+            strSql.Append(" where id=" + id);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
+        /// <summary>
+        /// 修改一列数据
+        /// </summary>
+        public int UpdateField(string carnumber, string strValue)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("update car_info set " + strValue);
+            strSql.Append(" where Car_Number='" + carnumber + "'");
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
+        /// <summary>
+        /// 更新一条数据
+        /// </summary>
+        public bool Update(Model.carinfo model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("update car_info set ");
+            strSql.Append("Car_Name=@carname,Car_Type_Code=@cartypecode,Car_Type_Name=@cartypename,Driver_Code=@drivercode,Buy_Date=@buydate,Price=@price,Mileage_First=@mileagefirst,Status=@status,Oil_Consumption=@oilconsumption,Engine_Number=@enginenumber,Frame_Number=@framenumber,Weight=@weight,Seat=@seat,cContent=@ccontent,Image1=@image1,Image2=@image2,Dept_Pros=@deptpros");
+            strSql.Append(" where id=@id");
+            SqlParameter[] parameters = {
+					new SqlParameter("@carname", SqlDbType.NVarChar,100),
+					new SqlParameter("@cartypecode", SqlDbType.NVarChar,100),
+					new SqlParameter("@cartypename", SqlDbType.NVarChar,100),
+					new SqlParameter("@drivercode", SqlDbType.NVarChar,100),
+					new SqlParameter("@buydate", SqlDbType.NVarChar,100),
+					new SqlParameter("@price", SqlDbType.Float,10),
+					new SqlParameter("@mileagefirst", SqlDbType.Int,10),
+					new SqlParameter("@status", SqlDbType.Int,10),
+					new SqlParameter("@oilconsumption", SqlDbType.Float,10),
+					new SqlParameter("@enginenumber", SqlDbType.NVarChar,100),
+					new SqlParameter("@framenumber", SqlDbType.NVarChar,100),
+					new SqlParameter("@weight", SqlDbType.Float,10),
+					new SqlParameter("@seat", SqlDbType.Int,10),
+					new SqlParameter("@ccontent", SqlDbType.NVarChar,100),
+					new SqlParameter("@image1", SqlDbType.NVarChar,100),
+					new SqlParameter("@image2", SqlDbType.NVarChar,100),
+					new SqlParameter("@deptpros", SqlDbType.NVarChar,26),
+					new SqlParameter("@id", SqlDbType.Int,4)};
+            parameters[0].Value = model.Car_Name;
+            parameters[1].Value = model.Car_Type.Type_Code;
+            parameters[2].Value = model.Car_Type.Type_Name;
+            parameters[3].Value = model.Driver.Driver_Code;
+            parameters[4].Value = model.Buy_Date;
+            parameters[5].Value = model.Price;
+            parameters[6].Value = model.Mileage_First;
+            parameters[7].Value = model.Status;
+            parameters[8].Value = model.Oil_Consumption;
+            parameters[9].Value = model.Engine_Number;
+            parameters[10].Value = model.Frame_Number;
+            parameters[11].Value = model.Weight;
+            parameters[12].Value = model.Seat;
+            parameters[13].Value = model.cContent;
+            parameters[14].Value = model.Image1;
+            parameters[15].Value = model.Image2;
+            parameters[16].Value = model.Dept_Pros;
+            parameters[17].Value = model.ID;
+
+            int rows = DbHelperSQL.ExecuteSql(strSql.ToString(), parameters);
+            if (rows > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 删除一条数据
+        /// </summary>
+        public bool Delete(int id)
+        {
+            List<CommandInfo> sqllist = new List<CommandInfo>();
+            //删除登录日志
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("delete from car_info ");
+            strSql.Append(" where ID=@id");
+            SqlParameter[] parameters = {
+					new SqlParameter("@id", SqlDbType.Int,4)};
+            parameters[0].Value = id;
+            CommandInfo cmd = new CommandInfo(strSql.ToString(), parameters);
+            sqllist.Add(cmd);
+
+            int rowsAffected = DbHelperSQL.ExecuteSqlTran(sqllist);
+            if (rowsAffected > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 得到一个对象实体
+        /// </summary>
+        public Model.carinfo GetModel(int id)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select  top 1 * from car_info ");
+            strSql.Append(" where ID=@id");
+            SqlParameter[] parameters = {
+					new SqlParameter("@id", SqlDbType.Int,4)};
+            parameters[0].Value = id;
+
+            Model.carinfo model = new Model.carinfo();
+            DataSet ds = DbHelperSQL.Query(strSql.ToString(), parameters);
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                string strid = ds.Tables[0].Rows[0]["ID"] + "";
+                model.ID = Convert.ToInt32(strid == "" ? "0" : strid);
+                model.Car_Number = ds.Tables[0].Rows[0]["Car_Number"] + "";
+                model.Car_Name = ds.Tables[0].Rows[0]["Car_Name"] + "";
+                model.Car_Type = new Model.car_typeinfo();
+                model.Car_Type.Type_Code = ds.Tables[0].Rows[0]["Car_Type_Code"] + "";
+                model.Car_Type.Type_Name = ds.Tables[0].Rows[0]["Car_Type_Name"] + "";
+                model.Driver = new Model.car_driverinfo();
+                model.Driver.Driver_Code = ds.Tables[0].Rows[0]["Driver_Code"] + "";
+                model.Buy_Date = ds.Tables[0].Rows[0]["Buy_Date"] + "";
+                string s = ds.Tables[0].Rows[0]["Price"] + "";
+                model.Price = Convert.ToDouble(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Mileage_First"] + "";
+                model.Mileage_First = Convert.ToInt32(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Status"] + "";
+                model.Status = Convert.ToInt32(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Oil_Consumption"] + "";
+                model.Oil_Consumption = float.Parse(s.Trim() == "" ? "0" : s);
+                model.Engine_Number = ds.Tables[0].Rows[0]["Engine_Number"] + "";
+                model.Frame_Number = ds.Tables[0].Rows[0]["Frame_Number"] + "";
+                s = ds.Tables[0].Rows[0]["Weight"] + "";
+                model.Weight = float.Parse(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Seat"] + "";
+                model.Seat = Convert.ToInt32(s.Trim() == "" ? "0" : s);
+                model.cContent = ds.Tables[0].Rows[0]["cContent"] + "";
+                model.Image1 = ds.Tables[0].Rows[0]["Image1"] + "";
+                model.Image2 = ds.Tables[0].Rows[0]["Image2"] + "";
+                model.Dept_Pros = ds.Tables[0].Rows[0]["Dept_Pros"] + "";
+                return model;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 根据用户名返回一个实体
+        /// </summary>
+        public Model.carinfo GetModel(string code,string carname)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select top 1 * from car_info");
+            strSql.Append(" where 1=1");
+            if (code.Trim() != "")
+            {
+                strSql.Append(" and Car_Number='" + code + "'");
+            }
+            if (carname.Trim() != "")
+            {
+                strSql.Append(" and Car_Name='" + carname + "'");
+            }
+            Model.carinfo model = new Model.carinfo();
+            DataSet ds = DbHelperSQL.Query(strSql.ToString());
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                string strid = ds.Tables[0].Rows[0]["ID"] + "";
+                model.ID = Convert.ToInt32(strid == "" ? "0" : strid);
+                model.Car_Number = ds.Tables[0].Rows[0]["Car_Number"] + "";
+                model.Car_Name = ds.Tables[0].Rows[0]["Car_Name"] + "";
+                model.Car_Type = new Model.car_typeinfo();
+                model.Car_Type.Type_Code = ds.Tables[0].Rows[0]["Car_Type_Code"] + "";
+                model.Car_Type.Type_Name = ds.Tables[0].Rows[0]["Car_Type_Name"] + "";
+                model.Driver = new Model.car_driverinfo();
+                model.Driver.Driver_Code = ds.Tables[0].Rows[0]["Driver_Code"] + "";
+                model.Buy_Date = ds.Tables[0].Rows[0]["Buy_Date"] + "";
+                string s = ds.Tables[0].Rows[0]["Price"] + "";
+                model.Price = Convert.ToDouble(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Mileage_First"] + "";
+                model.Mileage_First = Convert.ToInt32(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Status"] + "";
+                model.Status = Convert.ToInt32(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Oil_Consumption"] + "";
+                model.Oil_Consumption = float.Parse(s.Trim() == "" ? "0" : s);
+                model.Engine_Number = ds.Tables[0].Rows[0]["Engine_Number"] + "";
+                model.Frame_Number = ds.Tables[0].Rows[0]["Frame_Number"] + "";
+                s = ds.Tables[0].Rows[0]["Weight"] + "";
+                model.Weight = float.Parse(s.Trim() == "" ? "0" : s);
+                s = ds.Tables[0].Rows[0]["Seat"] + "";
+                model.Seat = Convert.ToInt32(s.Trim() == "" ? "0" : s);
+                model.cContent = ds.Tables[0].Rows[0]["cContent"] + "";
+                model.Image1 = ds.Tables[0].Rows[0]["Image1"] + "";
+                model.Image2 = ds.Tables[0].Rows[0]["Image2"] + "";
+                model.Dept_Pros = ds.Tables[0].Rows[0]["Dept_Pros"] + "";
+                return model;
+            }
+            else
+            {
+                return null;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获得前几行数据
+        /// </summary>
+        public DataSet GetList(int Top, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select ");
+            if (Top > 0)
+            {
+                strSql.Append(" top " + Top.ToString());
+            }
+            strSql.Append(" * ");
+            strSql.Append(" FROM car_info ");
+            if (strWhere.Trim() != "")
+            {
+                strSql.Append(" where " + strWhere);
+            }
+            strSql.Append(" order by " + filedOrder);
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
+        /// <summary>
+        /// 获得查询分页数据
+        /// </summary>
+        public DataSet GetList(int pageSize, int pageIndex, string strWhere, string filedOrder, out int recordCount)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select * FROM car_info");
+            if (strWhere.Trim() != "")
+            {
+                strSql.Append(" where " + strWhere);
+            }
+            recordCount = Convert.ToInt32(DbHelperSQL.GetSingle(PagingHelper.CreateCountingSql(strSql.ToString())));
+            return DbHelperSQL.Query(PagingHelper.CreatePagingSql(recordCount, pageSize, pageIndex, strSql.ToString(), filedOrder));
+        }
+
+        #endregion  Method
+
+        
+    }
+}

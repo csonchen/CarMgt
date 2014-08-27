@@ -1,0 +1,13 @@
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.DAL.dll
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.DAL.pdb
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.Common.dll
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.DBUtility.dll
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.Model.dll
+E:\CarMgt\DTcms.DAL\bin\Release\Newtonsoft.Json.Net20.dll
+E:\CarMgt\DTcms.DAL\bin\Release\org.in2bits.MyXls.dll
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.Common.pdb
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.DBUtility.pdb
+E:\CarMgt\DTcms.DAL\bin\Release\DTcms.Model.pdb
+E:\CarMgt\DTcms.DAL\obj\Release\DTcms.DAL.csprojResolveAssemblyReference.cache
+E:\CarMgt\DTcms.DAL\obj\Release\DTcms.DAL.dll
+E:\CarMgt\DTcms.DAL\obj\Release\DTcms.DAL.pdb

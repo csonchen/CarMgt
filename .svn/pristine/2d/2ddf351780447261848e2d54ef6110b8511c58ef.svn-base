@@ -1,0 +1,57 @@
+USE [CarMgt20140122]
+GO
+
+/****** Object:  Table [dbo].[car_use_record]    Script Date: 02/17/2014 14:58:47 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[car_use_record](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Code] [varchar](26) NOT NULL,
+	[Use_Time] [datetime] NOT NULL,
+	[Dept_Code] [varchar](26) NOT NULL,
+	[User_Code] [varchar](26) NOT NULL,
+	[Car_Number] [varchar](26) NOT NULL,
+	[Driver_Code] [varchar](26) NOT NULL,
+	[Start_Address] [varchar](250) NULL,
+	[Mileage_First] [int] NOT NULL,
+	[User_Number] [int] NOT NULL,
+	[UContent] [text] NULL,
+	[End_Address] [varchar](250) NULL,
+	[Return_Time] [datetime] NOT NULL,
+	[Connecter] [varchar](26) NULL,
+	[Tel] [varchar](50) NULL,
+	[Status] [int] NOT NULL,
+	[Checker_Code] [varchar](26) NULL,
+	[Check_Time] [datetime] NULL,
+	[Update_Time] [datetime] NULL,
+	[Create_Time] [datetime] NOT NULL,
+ CONSTRAINT [PK_car_use_record] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'0在申请,1修改,2批准通过,3批准不通过,4出车中,5车辆使用结束' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'car_use_record', @level2type=N'COLUMN',@level2name=N'Status'
+GO
+
+ALTER TABLE [dbo].[car_use_record] ADD  CONSTRAINT [DF_car_use_record_Mileage_First]  DEFAULT ((0)) FOR [Mileage_First]
+GO
+
+ALTER TABLE [dbo].[car_use_record] ADD  CONSTRAINT [DF_car_use_record_User_Number]  DEFAULT ((1)) FOR [User_Number]
+GO
+
+ALTER TABLE [dbo].[car_use_record] ADD  CONSTRAINT [DF_car_use_record_Status]  DEFAULT ((0)) FOR [Status]
+GO
+

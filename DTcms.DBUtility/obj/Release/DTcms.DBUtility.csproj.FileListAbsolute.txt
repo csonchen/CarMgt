@@ -1,0 +1,9 @@
+E:\CarMgt\DTcms.DBUtility\bin\Release\DTcms.DBUtility.dll
+E:\CarMgt\DTcms.DBUtility\bin\Release\DTcms.DBUtility.pdb
+E:\CarMgt\DTcms.DBUtility\bin\Release\DTcms.Common.dll
+E:\CarMgt\DTcms.DBUtility\bin\Release\Newtonsoft.Json.Net20.dll
+E:\CarMgt\DTcms.DBUtility\bin\Release\org.in2bits.MyXls.dll
+E:\CarMgt\DTcms.DBUtility\bin\Release\DTcms.Common.pdb
+E:\CarMgt\DTcms.DBUtility\obj\Release\DTcms.DBUtility.csprojResolveAssemblyReference.cache
+E:\CarMgt\DTcms.DBUtility\obj\Release\DTcms.DBUtility.dll
+E:\CarMgt\DTcms.DBUtility\obj\Release\DTcms.DBUtility.pdb
